@@ -16,20 +16,57 @@
     <!-- rendering -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- theme -->
+    <!-- theme
     <link rel="stylesheet" type="text/css" media="all"
-        href="${request.static_url('fas:static/theme/fedoraproject/style/fas.css')}" />
+        href="${request.static_url('fas:static/theme/fedoraproject/style/fas.css')}" /> -->
     <link rel="stylesheet" type="text/css" media="all"
-        href="${request.static_url('fas:static/theme/fedoraproject/style/component.css')}" />
-    <link rel="stylesheet" type="text/css" media="all"
-        href="${request.static_url('fas:static/theme/fedoraproject/style/animations.css')}" />
-    <script src="${request.static_url('fas:static/theme/fedoraproject/js/theme.js')}"></script>
+            href="https://apps.fedoraproject.org/global/fedora-bootstrap-1.0.1/fedora-bootstrap.css" />
+
     <script src="${request.static_url('fas:static/theme/fedoraproject/js/pwstrength.js')}"></script>
 </head>
 
-  <body class="navbar-expanded">
+  <body>
 
     <!-- top navbar -->
+    <div class="masthead">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-3">
+            <a class="navbar-brand" href="${request.route_url('home')}"
+               title="${_(u'Go back to Fedora Account System home')}">
+               <img src="${request.static_url('fas:static/theme/fedoraproject/assets/fedora-logo.png')}" alt="FAS Logo" id="kojiLogo" height="40px">
+            </a>
+          </div>
+          <div class="col-sm-9">
+            <div class="row">
+              <nav class="navbar navbar-light p-t-0 p-b-0">
+                  <div class="container">
+                    <ul class="nav navbar-nav nav-underline pull-xs-right">
+                      <li class="nav-item">
+                        <a class="nav-link" href="${request.route_url('groups')}">Groups</a>
+                      </li>
+                      <li class="nav-item p-l-1">
+                        <a class="nav-link" href="${request.route_url('people')}">People</a>
+                      </li>
+                        <li class="nav-item dropdown p-l-1">
+                              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                <img class="avatar circle" src="https://seccdn.libravatar.org/avatar/de5bf8d06663adb3bb1b8d49ccab259828fad7dddeb233b073d0c447d79b4c14?s=24&amp;d=retro">
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="/user/ryanlerch">My Profile</a>
+                            <a class="dropdown-item" href="/settings">My Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout/?next=https://pagure.io/pagure/commits/">Log Out</a>
+                          </div>
+                        </li>
+                    </ul>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -40,10 +77,6 @@
                     <span class="fas-icon-bar"></span>
                     <span class="fas-icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="${request.route_url('home')}"
-                   title="${_(u'Go back to Fedora Account System home')}">
-                    ${_(u'Fedora Account System')}
-                </a>
             </div>
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -113,7 +146,7 @@
         </div>
     </nav>
     %if request.session.peek_flash('error'):
-          <div class="alert alert-danger alert-dismissible" role="alert" 
+          <div class="alert alert-danger alert-dismissible" role="alert"
                style="max-width: 300px; margin: 20px; position: fixed; z-index: 20; box-shadow: 0px 0px 30px 3px rgba(159, 39, 39, 0.65);">
             <!-- Note that this style is temporary while validating the layout -->
             <button type="button" class="close" data-dismiss="alert">
@@ -150,9 +183,11 @@
           </div>
 -->
     %endif
-
+<div class="bodycontent">
+  <div class="container">
     ${self.body()}
-
+  </div>
+</div>
     <div class="footer-wrapper">
         <div class="container-fluid">
             <div class="row">
