@@ -89,7 +89,7 @@ def main(global_config, **settings):
 
     config.add_static_view(
         name='static',
-        path='fas:theme/default/static',
+        path=settings['project.theme.path'],
         cache_max_age=int(settings['cache.max_age'])
     )
 
