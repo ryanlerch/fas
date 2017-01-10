@@ -21,6 +21,7 @@ __author__ = 'Xavier Lamien <laxathom@fedoraproject.org>'
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.events import BeforeRender
 
 from sqlalchemy import engine_from_config
 
@@ -76,6 +77,9 @@ def main(global_config, **settings):
         root_factory='fas.security.Root'
     )
 
+    def add_renderer_globals(event):
+       event['theme_static'] = settings['project.theme.path']
+
     from fas.renderers import jpeg
     config.add_renderer('jpeg', jpeg)
 
@@ -85,7 +89,7 @@ def main(global_config, **settings):
 
     config.add_static_view(
         name='static',
-        path=settings['project.theme.path'],
+        path='fas:theme/default/static',
         cache_max_age=int(settings['cache.max_age'])
     )
 
@@ -250,4 +254,6 @@ def main(global_config, **settings):
     config.add_route('dump-data', '/settings/dump/{key}')  # internal query
 
     config.scan()
+    config.add_subscriber(add_renderer_globals, BeforeRender)
+
     return config.make_wsgi_app()
