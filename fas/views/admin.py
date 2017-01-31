@@ -170,17 +170,19 @@ class Admin(object):
         offset = 0
 
         key = self.request.matchdict.get('key')
+        log.debug(self.request.params)
+        #try:
+        if self.request.params['search[value]'] != '':
+            query = self.request.params['search[value]']
 
-        try:
-            if 'search' in self.request.GET.keys():
-                query = self.request.params['search']
+        #query_order = self.request.params['order']
 
-            query_order = self.request.params['order']
-
-            limit = self.request.params['limit']
-            offset = int(self.request.params['offset'])
-        except KeyError:
-            pass
+        limit = int(self.request.params['length'])
+        offset = int(self.request.params['start'])
+        log.debug(limit)
+        log.debug(offset)
+        #except KeyError:
+            #pass
 
         data = dict()
         data.setdefault('total')
@@ -197,11 +199,21 @@ class Admin(object):
                 query += '%'
 
         if 'people' == key:
+            log.debug(limit)
+            log.debug(offset)
             items_count = provider.get_people(count=True)
+            if query:
+                filtered_items_count = provider.get_people(count=True,
+                                        pattern=query, status=AccountStatus)
+            else:
+                filtered_items_count = items_count
+            order_column = self.request.params['order[0][column]']
+            orderby = self.request.params['columns['+order_column+'][data]']
+            ordering = self.request.params['order[0][dir]']
             items = [i.to_json(AccountPermissionType.CAN_READ_PUBLIC_INFO)
                      for i in
                      provider.get_people(limit=int(limit), pattern=query,
-                                         offset=offset, status=AccountStatus) if
+                                         offset=offset, status=AccountStatus, orderby=orderby, ordering=ordering) if
                      i is not None]
         elif 'groups' == key:
             items = [i.to_json(AccountPermissionType.CAN_READ_PUBLIC_INFO, True)
@@ -210,8 +222,9 @@ class Admin(object):
                                          status=GroupStatus, offset=offset) if
                      i is not None]
             items_count = provider.get_groups(count=True)
-            log.warn('Found {} items'.format(items_count))
-            log.warn('Found items {}'.format(items))
+            filtered_items_count = items_count
+            #log.warn('Found {} items'.format(items_count))
+            #log.warn('Found items {}'.format(items))
         elif 'grouptypes' == key:
             gt = provider.get_group_types()
             items_count = len(gt)
@@ -233,11 +246,12 @@ class Admin(object):
             items_count = 0
 
         log.warn('Offset is: {}'.format(offset))
-
         if items is not None:
-            data['total'] = items_count
-            data['rows'] = items
-
+            data['draw'] = int(self.request.params['draw'])
+            data['recordsFiltered'] = filtered_items_count
+            data['recordsTotal'] = items_count
+            data['data'] = items
+        log.debug(data)
         return data
 
     @view_config(route_name='remove-group', permission='admin')

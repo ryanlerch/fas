@@ -299,7 +299,7 @@ def get_grouptype_by_id(id):
 # Method to interact with People
 
 def get_people(limit=None, page=None, pattern=None, count=False, status=-1,
-               offset=0):
+               offset=0, orderby=People.fullname, ordering='asc'):
     """
     Retrieves registered people based on given criteria.
 
@@ -317,8 +317,19 @@ def get_people(limit=None, page=None, pattern=None, count=False, status=-1,
     """
     if page is not None and (page <= 0):
         page = 1
-
-    query = session.query(People).order_by(People.fullname)
+    if orderby == 'username':
+        if ordering == 'desc':
+            orderby = People.username.desc()
+        else:
+            orderby = People.username.asc()
+    elif orderby == 'status':
+        if ordering == 'desc':
+            orderby = People.status.desc()
+        else:
+            orderby = People.status.asc()
+    else:
+        orderby = People.fullname
+    query = session.query(People).order_by(orderby)
 
     if status > -1:
         query = query.filter(

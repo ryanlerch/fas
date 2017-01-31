@@ -87,20 +87,17 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
       <!-- Default panel contents -->
       <div class="panel-heading"><span class="fas-icon-user"></span> ${_(u'Users Management')}</div>
       <!-- Table data-toggle="table"-->
-      <table id="people-table" data-toggle="table" class="table table-hover" data-id-field="id"
-             data-url="/settings/dump/people" data-height="545" data-side-pagination="server"
-             data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200, ALL]"
-             data-search="true" data-show-refresh="true" data-response-handler="responseHandler">
+      <table id="people-table" class="table">
           <thead>
           <tr>
-              <th data-field="state" data-checkbox="true"></th>
-              <th data-field="id" data-align="center">${_(u'Id')}</th>
-              <th data-field="username" data-align="center" data-sortable="true">${_(u'Username')}</th>
-              <th data-field="fullname" data-align="center">${_(u'Full Name')}</th>
-              <th data-field="status" data-align="center" data-sortable="true" data-formatter="statusLabel">${_(u'Status')}</th>
-              <th data-field="creation_date" data-align="center">${_(u'Joined on')}</th>
-              <!--<th data-field="avatar">${_(u'Last activity')}</th>-->
-              <th data-align="center" data-events="actionEvents" data-formatter="peopleActions">${_(u'Actions')}</th>
+              <!--<th data-field="state" data-checkbox="true"></th>-->
+              <th>${_(u'Username')}</th>
+              <th>${_(u'Full Name')}</th>
+              <th>${_(u'Id')}</th>
+              <th>${_(u'Status')}</th>
+              <th>${_(u'Joined on')}</th>
+              <!--<th data-field="avatar">${_(u'Last activity')}</th>
+              <th data-align="center" data-events="actionEvents" data-formatter="peopleActions">${_(u'Actions')}</th>-->
           </tr>
           </thead>
 
@@ -142,22 +139,18 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             <!-- Group's tab -->
             <div role="tabpanel" class="tab-pane active" id="group">
                 <!-- Groups table -->
-                <table id="group-table" data-toggle="table" class="table table-hover"
-                       data-url="/settings/dump/groups" data-height="545" data-side-pagination="server"
-                       data-pagination="true" data-page-list="[5, 10, 20, 50, 100]"
-                       data-search="true" data-show-refresh="true">
+                <table id="group-table" class="table table-hover">
                     <thead>
                     <tr>
-                        <th data-field="state" data-checkbox="true"></th>
-                        <th data-field="id" data-align="center">${_(u'Id')}</th>
-                        <th data-field="name" data-align="center" data-sortable="true">${_(u'Name')}</th>
-                        <th data-field="display_name" data-align="center">${_(u'Display Name')}</th>
-                        <th data-field="owner_id" data-align="center">${_(u'Admin')}</th>
-                        <th data-field="group_type" data-align="center">${_(u'Type')}</th>
-                        <th data-field="status" data-align="center" data-sortable="true" data-formatter="statusLabel">${_(u'Status')}</th>
-                        <th data-field="parent_group_id" data-align="center">${_(u'Parent')}</th>
-                        <th data-field="creationDate" data-align="center" data-sortable="true">${_(u'Created on')}</th>
-                        <th data-align="center" data-events="actionEvents" data-formatter="groupActions">${_(u'Actions')}</th>
+                        <th data-field="id">${_(u'Id')}</th>
+                        <th data-field="name">${_(u'Name')}</th>
+                        <th data-field="display_name">${_(u'Display Name')}</th>
+                        <th data-field="owner_id">${_(u'Admin')}</th>
+                        <th data-field="group_type">${_(u'Type')}</th>
+                        <th data-field="status">${_(u'Status')}</th>
+                        <th data-field="parent_group_id">${_(u'Parent')}</th>
+                        <th data-field="creationDate">${_(u'Created on')}</th>
+                        <th data-align="center">${_(u'Actions')}</th>
                     </tr>
                     </thead>
                 </table>
@@ -165,7 +158,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
 
             <!-- Group type's tab -->
             <div role="tabpanel" class="tab-pane" id="group-type">
-                <!-- Group type's table -->
+                <!-- Group type's table
                 <table id="group-type-table" data-toggle="table" class="table table-hover"
                         data-url="/settings/dump/grouptypes" data-height="300" data-side-pagination="server"
                         data-pagination="true" data-page-list="[5, 10, 20]"
@@ -179,7 +172,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                         <th data-align="center" data-events="actionEvents" data-formatter="grouptypeActions">${_(u'Actions')}</th>
                     </tr>
                     </thead>
-                </table>
+                </table>-->
             </div>
         </div>
     </div>
@@ -200,7 +193,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                     </h3>
                 </div>
 
-                <!-- Table -->
+                <!-- Table
                 <table data-toggle="table" class="table table-hover"
                         data-url="/settings/dump/licenses" data-height="300" data-side-pagination="server"
                         data-pagination="true" data-page-list="[5, 10, 20]"
@@ -216,7 +209,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                         <th data-align="center" data-events="actionEvents" data-formatter="licenseActions">${_(u'Actions')}</th>
                     </tr>
                     </thead>
-                </table>
+                </table>-->
             </div>
         </div>
 
@@ -234,7 +227,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                     </h3>
                 </div>
 
-                <!-- Table -->
+                <!-- Table
                 <table data-toggle="table" class="table table-hover"
                         data-url="/settings/dump/certificates" data-height="300" data-side-pagination="server"
                         data-pagination="true" data-page-list="[5, 10, 20]"
@@ -252,7 +245,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                     </tr>
                     </thead>
 
-                </table>
+                </table>-->
             </div>
         </div>
 
@@ -273,7 +266,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                     -->
                 </div>
 
-                <!-- Table -->
+                <!-- Table
                 <table data-toggle="table" class="table table-hover"
                         data-url="/settings/dump/trustedapps" data-height="300" data-side-pagination="server"
                         data-pagination="true" data-page-list="[5, 10, 20]"
@@ -288,15 +281,103 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                         <th data-align="center" data-events="actionEvents" data-formatter="appsActions">${_(u'Actions')}</th>
                     </tr>
                     </thead>
-                </table>
+                </table> -->
             </div>
         </div>
 
     </div>
 
     <script>
+
+    $(document).ready(function() {
+/*
+      <th data-field="id">${_(u'Id')}</th>
+      <th data-field="name">${_(u'Name')}</th>
+      <th data-field="display_name">${_(u'Display Name')}</th>
+      <th data-field="owner_id">${_(u'Admin')}</th>
+      <th data-field="group_type">${_(u'Type')}</th>
+      <th data-field="status">${_(u'Status')}</th>
+      <th data-field="parent_group_id">${_(u'Parent')}</th>
+      <th data-field="creationDate">${_(u'Created on')}</th>
+      <th data-align="center">${_(u'Actions')}</th>*/
+      $('#group-table').DataTable( {
+          "processing": true,
+          "serverSide": true,
+          "columns": [
+            {
+              "data": "name"
+            },
+            {
+              "data": "display_name",
+              "orderable": false,
+            },
+            {
+              "data": "id",
+              "orderable": false,
+            },
+            {
+              "data": "owner_id",
+            },
+            {
+              "data": "group_type",
+              "orderable": false,
+            }
+          ],
+          "ajax": "/settings/dump/groups"
+      } );
+
+    $('#people-table').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "columns": [
+          {
+            "data": "username"
+          },
+          {
+            "data": "fullname",
+            "orderable": false,
+          },
+          {
+            "data": "id",
+            "orderable": false,
+          },
+          {
+            "data": "status",
+            "render": function ( data, type, full, meta ) {
+              if(data == ${account_status.ACTIVE.value}) {
+                  return '<span class="label label-success">${_(u'active')}</span>';
+              }
+              else if(data == ${account_status.ON_VACATION.value}) {
+                  return '<span class="label label-info">${_(u'on vacation')}</span>';
+              }
+              else if(data == ${account_status.INACTIVE.value}) {
+                  return '<span class="label label-warning">${_(u'inactive')}</span>';
+              }
+              else if(data == ${account_status.PENDING.value}) {
+                  return '<span class="label label-info">${_(u'inactive')}</span>';
+              }
+              else if(data == ${account_status.DISABLED.value}) {
+                  return '<span class="label label-default">${_(u'archived')}</span>';
+              }
+              else if(data == ${account_status.LOCKED.value} || data == "${account_status.LOCKED_BY_ADMIN.value}") {
+                  return '<span class="label label-danger">${_(u'blocked')}</span>';
+              }
+              else {
+                  return '<span class="label label-default">${_(u'Unknown')}</span>';
+              }
+            }
+          },
+          {
+            "data": "creation_date",
+            "orderable": false,
+          }
+        ],
+        "ajax": "/settings/dump/people"
+    } );
+} );
+
         function fasNotify(msg, type) {
-##             TODO: Add a prefix icon to message based on msg\'s type.
+##             TODO: Add a prefix icon to message based on msgs type.
             var notification = new window.NotificationFx({
                 wrapper : document.body,
                 message : '<p>' + msg + '</p>',
