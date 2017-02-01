@@ -139,18 +139,18 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             <!-- Group's tab -->
             <div role="tabpanel" class="tab-pane active" id="group">
                 <!-- Groups table -->
-                <table id="group-table" class="table table-hover">
+                <table id="group-table" class="table">
                     <thead>
                     <tr>
-                        <th data-field="id">${_(u'Id')}</th>
+
                         <th data-field="name">${_(u'Name')}</th>
                         <th data-field="display_name">${_(u'Display Name')}</th>
+                        <th data-field="id">${_(u'Id')}</th>
                         <th data-field="owner_id">${_(u'Admin')}</th>
                         <th data-field="group_type">${_(u'Type')}</th>
                         <th data-field="status">${_(u'Status')}</th>
                         <th data-field="parent_group_id">${_(u'Parent')}</th>
                         <th data-field="creationDate">${_(u'Created on')}</th>
-                        <th data-align="center">${_(u'Actions')}</th>
                     </tr>
                     </thead>
                 </table>
@@ -317,11 +317,24 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             },
             {
               "data": "owner_id",
+              "orderable": false,
             },
             {
               "data": "group_type",
               "orderable": false,
-            }
+            },
+            {
+              "data": "status",
+              "orderable": false,
+            },
+            {
+              "data": "parent_group_id",
+              "orderable": false,
+            },
+            {
+              "data": "creationDate",
+              "orderable": false,
+            },
           ],
           "ajax": "/settings/dump/groups"
       } );

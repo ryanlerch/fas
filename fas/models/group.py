@@ -215,6 +215,8 @@ class Groups(Base):
         if self.parent_group:
             info['parent_group_id'] = self.parent_group.name if human_r else \
                 self.parent_group.id
+        else:
+            info['parent_group_id'] = None
 
         if permissions >= AccountPermissionType.CAN_READ_PEOPLE_FULL_INFO and \
                 self.members:
