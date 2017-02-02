@@ -216,15 +216,21 @@ class Admin(object):
                                          offset=offset, status=AccountStatus, orderby=orderby, ordering=ordering) if
                      i is not None]
         elif 'groups' == key:
+            order_column = self.request.params['order[0][column]']
+            orderby = self.request.params['columns['+order_column+'][data]']
+            ordering = self.request.params['order[0][dir]']
             items = [i.to_json(AccountPermissionType.CAN_READ_PUBLIC_INFO, True)
                      for i in
                      provider.get_groups(limit=int(limit), pattern=query,
-                                         status=GroupStatus, offset=offset) if
+                                         status=GroupStatus, offset=offset,
+                                         orderby=orderby, ordering=ordering) if
                      i is not None]
             items_count = provider.get_groups(count=True)
-            filtered_items_count = items_count
-            #log.warn('Found {} items'.format(items_count))
-            #log.warn('Found items {}'.format(items))
+            if query:
+                filtered_items_count = provider.get_groups(count=True,
+                                        pattern=query, status=GroupStatus)
+            else:
+                filtered_items_count = items_count
         elif 'grouptypes' == key:
             gt = provider.get_group_types()
             items_count = len(gt)

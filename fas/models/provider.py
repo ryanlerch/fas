@@ -55,12 +55,15 @@ def __get_listoffset(page, limit):
 
 # Method to interact with Groups
 def get_groups(limit=None, page=None, pattern=None, count=False, status=None,
-               offset=None):
+               offset=None, orderby='id', ordering='asc'):
     """ Retrieves all registered groups from database. """
     if page is not None and (page <= 0):
         page = 1
-
-    query = session.query(Groups)
+    if ordering == 'desc':
+        orderby = getattr(Groups, orderby).desc()
+    elif ordering == 'asc':
+        orderby = getattr(Groups, orderby).asc()
+    query = session.query(Groups).order_by(orderby)
 
     if status is not None:
         query = query.filter(
@@ -299,7 +302,7 @@ def get_grouptype_by_id(id):
 # Method to interact with People
 
 def get_people(limit=None, page=None, pattern=None, count=False, status=-1,
-               offset=0, orderby=People.fullname, ordering='asc'):
+               offset=0, orderby='fullname', ordering='asc'):
     """
     Retrieves registered people based on given criteria.
 
@@ -317,18 +320,11 @@ def get_people(limit=None, page=None, pattern=None, count=False, status=-1,
     """
     if page is not None and (page <= 0):
         page = 1
-    if orderby == 'username':
-        if ordering == 'desc':
-            orderby = People.username.desc()
-        else:
-            orderby = People.username.asc()
-    elif orderby == 'status':
-        if ordering == 'desc':
-            orderby = People.status.desc()
-        else:
-            orderby = People.status.asc()
-    else:
-        orderby = People.fullname
+    if ordering == 'desc':
+        orderby = getattr(People, orderby).desc()
+    elif ordering == 'asc':
+        orderby = getattr(People, orderby).asc()
+
     query = session.query(People).order_by(orderby)
 
     if status > -1:

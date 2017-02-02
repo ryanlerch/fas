@@ -96,6 +96,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
               <th>${_(u'Id')}</th>
               <th>${_(u'Status')}</th>
               <th>${_(u'Joined on')}</th>
+              <th>${_(u'Actions')}</th>
               <!--<th data-field="avatar">${_(u'Last activity')}</th>
               <th data-align="center" data-events="actionEvents" data-formatter="peopleActions">${_(u'Actions')}</th>-->
           </tr>
@@ -300,6 +301,62 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
       <th data-field="parent_group_id">${_(u'Parent')}</th>
       <th data-field="creationDate">${_(u'Created on')}</th>
       <th data-align="center">${_(u'Actions')}</th>*/
+
+      function renderStatusLabel( data, type, full, meta ) {
+        if(data == ${account_status.ACTIVE.value}) {
+            return '<span class="label label-success">${_(u'active')}</span>';
+        }
+        else if(data == ${account_status.ON_VACATION.value}) {
+            return '<span class="label label-info">${_(u'on vacation')}</span>';
+        }
+        else if(data == ${account_status.INACTIVE.value}) {
+            return '<span class="label label-warning">${_(u'inactive')}</span>';
+        }
+        else if(data == ${account_status.PENDING.value}) {
+            return '<span class="label label-info">${_(u'inactive')}</span>';
+        }
+        else if(data == ${account_status.DISABLED.value}) {
+            return '<span class="label label-default">${_(u'archived')}</span>';
+        }
+        else if(data == ${account_status.LOCKED.value} || data == "${account_status.LOCKED_BY_ADMIN.value}") {
+            return '<span class="label label-danger">${_(u'blocked')}</span>';
+        }
+        else {
+            return '<span class="label label-default">${_(u'Unknown')}</span>';
+        }
+      }
+
+      function peopleActions(data, type, row, meta) {
+          var actions = [
+              '<a class="remove action-events" data-context="people" href="javascript:void(0)" title="Remove account">',
+              '<i class="fas-icon-trash text-danger"></i>',
+              '</a>',
+          ];
+          if(row.status != ${account_status.DISABLED.value}) {
+              actions.unshift(
+                      '<a class="archive action-events" data-context="people" href="javascript:void(0)" title="Disable and archive account">',
+                      '<i class="fas-icon-file-archive text-warning"></i>',
+                      '</a> '
+              )
+              if (row.status == ${account_status.LOCKED.value} || row.status == ${account_status.LOCKED_BY_ADMIN.value}) {
+                  actions.unshift('<a class="unlock action-events" data-context="people" href="javascript:void(0)" title="Unlock account">',
+                          '<i class="fas-icon-lock-open"></i>',
+                          '</a> ')
+              }
+              else {
+                  actions.unshift('<a class="lock action-events" data-context="people" href="javascript:void(0)" title="Lock account">',
+                          '<i class="fas-icon-lock"></i>',
+                          '</a> ');
+              }
+          }
+          else {
+              actions.unshift('<a class="enable" href="javascript:void(0)" title="Activate account">',
+                      '<i class="fas-icon-user"></i>',
+                      '</a> ');
+          }
+          return actions.join('');
+      }
+
       $('#group-table').DataTable( {
           "processing": true,
           "serverSide": true,
@@ -313,7 +370,6 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             },
             {
               "data": "id",
-              "orderable": false,
             },
             {
               "data": "owner_id",
@@ -325,7 +381,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             },
             {
               "data": "status",
-              "orderable": false,
+              "render": renderStatusLabel,
             },
             {
               "data": "parent_group_id",
@@ -339,9 +395,51 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
           "ajax": "/settings/dump/groups"
       } );
 
-    $('#people-table').DataTable( {
+    var peopleTable = $('#people-table').DataTable( {
         "processing": true,
         "serverSide": true,
+        "drawCallback": function(settings){
+          $('#people-table').off('click', '.remove').on('click', '.remove', function () {
+              var data = peopleTable.row( $(this).parents('tr') ).data();
+              sendRequest(getFasContext($(this)),
+                          '/settings/remove/' + getFasContext($(this)) + '/' + data.id,
+                          'POST',
+                          function(){
+                            peopleTable.ajax.reload();
+                          });
+          });
+          $('#people-table').off('click', '.lock').on('click', '.lock', function () {
+              var data = peopleTable.row( $(this).parents('tr') ).data();
+              sendRequest(getFasContext($(this)),
+                          '/settings/lock/' + getFasContext($(this)) + '/' + data.id,
+                          'POST',
+                          function(){
+                            peopleTable.ajax.reload();
+                          }
+                        );
+          });
+          $('#people-table').off('click', '.unlock').on('click', '.unlock', function () {
+              var data = peopleTable.row( $(this).parents('tr') ).data();
+              sendRequest(getFasContext($(this)),
+                            '/settings/unlock/' + getFasContext($(this)) + '/' + data.id,
+                            'POST',
+                            function(){
+                              peopleTable.ajax.reload();
+                            }
+                          );
+          });
+          $('#people-table').off('click', '.archive').on('click', '.archive', function () {
+              var data = peopleTable.row( $(this).parents('tr') ).data();
+              sendRequest(getFasContext($(this)),
+                            '/settings/archive/' + getFasContext($(this)) + '/' + data.id,
+                            'POST',
+                            function(){
+                              peopleTable.ajax.reload();
+                            }
+                          );
+          });
+
+        },
         "columns": [
           {
             "data": "username"
@@ -356,37 +454,22 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
           },
           {
             "data": "status",
-            "render": function ( data, type, full, meta ) {
-              if(data == ${account_status.ACTIVE.value}) {
-                  return '<span class="label label-success">${_(u'active')}</span>';
-              }
-              else if(data == ${account_status.ON_VACATION.value}) {
-                  return '<span class="label label-info">${_(u'on vacation')}</span>';
-              }
-              else if(data == ${account_status.INACTIVE.value}) {
-                  return '<span class="label label-warning">${_(u'inactive')}</span>';
-              }
-              else if(data == ${account_status.PENDING.value}) {
-                  return '<span class="label label-info">${_(u'inactive')}</span>';
-              }
-              else if(data == ${account_status.DISABLED.value}) {
-                  return '<span class="label label-default">${_(u'archived')}</span>';
-              }
-              else if(data == ${account_status.LOCKED.value} || data == "${account_status.LOCKED_BY_ADMIN.value}") {
-                  return '<span class="label label-danger">${_(u'blocked')}</span>';
-              }
-              else {
-                  return '<span class="label label-default">${_(u'Unknown')}</span>';
-              }
-            }
+            "render": renderStatusLabel,
           },
           {
             "data": "creation_date",
             "orderable": false,
+          },
+          {
+            "data": null,
+            "render": peopleActions,
           }
         ],
         "ajax": "/settings/dump/people"
     } );
+
+
+
 } );
 
         function fasNotify(msg, type) {
@@ -405,36 +488,6 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             notification.show();
         }
 
-        function peopleActions(value, row, index) {
-            var actions = [
-                '<a class="remove action-events" data-context="people" href="javascript:void(0)" title="Remove account">',
-                '<i class="fas-icon-trash text-danger"></i>',
-                '</a>',
-            ];
-            if(row.status != ${account_status.DISABLED.value}) {
-                actions.unshift(
-                        '<a class="archive action-events" data-context="people" href="javascript:void(0)" title="Disable and archive account">',
-                        '<i class="fas-icon-file-archive text-warning"></i>',
-                        '</a> '
-                )
-                if (row.status == ${account_status.LOCKED.value} || row.status == ${account_status.LOCKED_BY_ADMIN.value}) {
-                    actions.unshift('<a class="unlock action-events" data-context="people" href="javascript:void(0)" title="Unlock account">',
-                            '<i class="fas-icon-lock-open"></i>',
-                            '</a> ')
-                }
-                else {
-                    actions.unshift('<a class="lock action-events" data-context="people" href="javascript:void(0)" title="Lock account">',
-                            '<i class="fas-icon-lock"></i>',
-                            '</a> ');
-                }
-            }
-            else {
-                actions.unshift('<a class="enable" href="javascript:void(0)" title="Activate account">',
-                        '<i class="fas-icon-user"></i>',
-                        '</a> ');
-            }
-            return actions.join('');
-        }
 
         function groupActions(value, row, index) {
         return [
@@ -497,7 +550,7 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             return ctx.attr('data-context');
         }
 
-        function sendRequest(ctx, request, type) {
+        function sendRequest(ctx, request, type, callback) {
             type = typeof type !== 'undefined' ? type : 'POST';
 
 ##             group's type related to match route's url.
@@ -523,8 +576,8 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                         },
                         success: function(xhr) {
                             console.log(xhr);
-##                             table.bootstrapTable('refresh');
                             fasNotify(xhr.msg, 'success');
+                            callback();
                         },
                         error: function(xhr){
                             if(typeof xhr.responseJSON !== "undefined") {
