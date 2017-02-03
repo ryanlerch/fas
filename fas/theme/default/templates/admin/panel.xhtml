@@ -143,15 +143,15 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
                 <table id="group-table" class="table">
                     <thead>
                     <tr>
-
-                        <th data-field="name">${_(u'Name')}</th>
-                        <th data-field="display_name">${_(u'Display Name')}</th>
-                        <th data-field="id">${_(u'Id')}</th>
-                        <th data-field="owner_id">${_(u'Admin')}</th>
-                        <th data-field="group_type">${_(u'Type')}</th>
-                        <th data-field="status">${_(u'Status')}</th>
-                        <th data-field="parent_group_id">${_(u'Parent')}</th>
-                        <th data-field="creationDate">${_(u'Created on')}</th>
+                        <th>${_(u'Name')}</th>
+                        <th>${_(u'Display Name')}</th>
+                        <th>${_(u'Id')}</th>
+                        <th>${_(u'Admin')}</th>
+                        <th>${_(u'Type')}</th>
+                        <th>${_(u'Status')}</th>
+                        <th>${_(u'Parent')}</th>
+                        <th>${_(u'Created on')}</th>
+                        <th>${_(u'Actions')}</th>
                     </tr>
                     </thead>
                 </table>
@@ -291,16 +291,6 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
     <script>
 
     $(document).ready(function() {
-/*
-      <th data-field="id">${_(u'Id')}</th>
-      <th data-field="name">${_(u'Name')}</th>
-      <th data-field="display_name">${_(u'Display Name')}</th>
-      <th data-field="owner_id">${_(u'Admin')}</th>
-      <th data-field="group_type">${_(u'Type')}</th>
-      <th data-field="status">${_(u'Status')}</th>
-      <th data-field="parent_group_id">${_(u'Parent')}</th>
-      <th data-field="creationDate">${_(u'Created on')}</th>
-      <th data-align="center">${_(u'Actions')}</th>*/
 
       function renderStatusLabel( data, type, full, meta ) {
         if(data == ${account_status.ACTIVE.value}) {
@@ -327,11 +317,14 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
       }
 
       function peopleActions(data, type, row, meta) {
+          /*
+          there is no remove function in the backend, so commenting this out
           var actions = [
               '<a class="remove action-events" data-context="people" href="javascript:void(0)" title="Remove account">',
               '<i class="fas-icon-trash text-danger"></i>',
               '</a>',
-          ];
+          ];*/
+          var actions = [];
           if(row.status != ${account_status.DISABLED.value}) {
               actions.unshift(
                       '<a class="archive action-events" data-context="people" href="javascript:void(0)" title="Disable and archive account">',
@@ -357,9 +350,47 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
           return actions.join('');
       }
 
-      $('#group-table').DataTable( {
+      function groupActions(data, type, row, meta) {
+        return [
+            '<a class="edit" href="/group/details/' + row.id + '/edit" title="Edit">',
+            '<i class="fas-icon-pencil text-info"></i>',
+            '</a> ',
+            '<a class="archive" href="javascript:void(0)" title="Disable and archive">',
+            '<i class="fas-icon-lock text-warning"></i>',
+            '</a> ',
+            '<a class="remove action-events" data-context="group" href="javascript:void(0)" title="Remove">',
+            '<i class="fas-icon-trash text-danger"></i>',
+            '</a>'
+         ].join('');
+      }
+
+
+      var groupTable = $('#group-table').DataTable( {
           "processing": true,
           "serverSide": true,
+          "drawCallback": function(settings){
+            $('#group-table').off('click', '.remove').on('click', '.remove', function () {
+                var data = groupTable.row( $(this).parents('tr') ).data();
+                sendRequest(getFasContext($(this)),
+                            '/settings/remove/group/' + data.id,
+                            'POST',
+                            function(){
+                              groupTable.ajax.reload();
+                            });
+            });
+
+            $('#people-table').off('click', '.archive').on('click', '.archive', function () {
+                var data = peopleTable.row( $(this).parents('tr') ).data();
+                sendRequest(getFasContext($(this)),
+                              '/settings/archive/' + getFasContext($(this)) + '/' + data.id,
+                              'POST',
+                              function(){
+                                groupTable.ajax.reload();
+                              }
+                            );
+            });
+
+          },
           "columns": [
             {
               "data": "name"
@@ -391,6 +422,10 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
               "data": "creationDate",
               "orderable": false,
             },
+            {
+              "data": null,
+              "render": groupActions,
+            }
           ],
           "ajax": "/settings/dump/groups"
       } );
@@ -488,20 +523,6 @@ ${Page.set_title(_(u'Account settings'), _(u'Manage the account system'))}
             notification.show();
         }
 
-
-        function groupActions(value, row, index) {
-        return [
-            '<a class="edit" href="/group/details/' + row.id + '/edit" title="Edit">',
-            '<i class="fas-icon-pencil text-info"></i>',
-            '</a> ',
-            '<a class="archive" href="javascript:void(0)" title="Disable and archive">',
-            '<i class="fas-icon-lock text-warning"></i>',
-            '</a> ',
-            '<a class="remove action-events" data-context="group" href="javascript:void(0)" title="Remove">',
-            '<i class="fas-icon-trash text-danger"></i>',
-            '</a>'
-         ].join('');
-        }
         function grouptypeActions(value, row, index) {
             return [
             '<a class="edit" href="javascript:void(0)" title="Edit type">',

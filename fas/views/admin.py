@@ -283,8 +283,8 @@ class Admin(object):
             status = "success"
             msg_type = 'info'
             msg = "Group {0:s} has been deleted from system".format(group.name)
-
-            register.remove_group(group)
+            log.debug(group.id)
+            register.remove_group(group.id)
             self.notify(GroupDeleted(self.request, group))
 
         if self.request.is_xhr:  # We only use js that set this in header
